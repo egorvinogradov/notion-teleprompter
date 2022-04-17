@@ -1,6 +1,13 @@
 # notion-teleprompter
 Turn Notion articles into a teleprompter-friendly script.
 
+Quick setup via 4 easy steps:
+
+1. [Export from Notion](#1-export-from-notion)
+2. [Unarchive into notion-teleprompter folder](#2-unarchive-and-put-into-the-notion-teleprompter-folder)
+3. [Run PATCH.sh](#3-run-patchsh)
+4. [Publish online](#4-the-teleprompter-friendly-script-is-ready-now-publish-it-online-or-run-locally)
+
 <img width="50%" alt="Screenshot 2022-04-17 at 11 01 31" src="https://user-images.githubusercontent.com/1618344/163702575-f04a7122-faa9-440e-8d07-c2695264ebca.png"><img width="50%" alt="Screenshot 2022-04-17 at 11 01 35" src="https://user-images.githubusercontent.com/1618344/163701953-fe8bd198-a607-4471-978f-70a2ee17792b.png"><img width="50%" alt="Screenshot 2022-04-17 at 12 00 35" src="https://user-images.githubusercontent.com/1618344/163702716-b87a11a5-9f65-4a01-86ae-123aaefeda37.png"><img width="50%" alt="Screenshot 2022-04-17 at 11 01 39" src="https://user-images.githubusercontent.com/1618344/163701955-f7d33c07-8ee2-4610-bc63-4156119253f5.png">
 
 
