@@ -1,0 +1,59 @@
+body {
+  --tele-font-size: inherit;
+  font-size: var(--tele-font-size);
+}
+
+.tele_color_inverted {
+  filter: invert(1);
+  background: black;
+}
+
+.tele_mirrored {
+  transform: scaleX(-1);
+}
+
+.tele_mirrored .tele-settings {
+  transform: scaleX(-1);
+}
+
+.tele-settings {
+  font-size: 20px;
+  line-height: 20px;
+  font-family: sans-serif;
+  border: 1px solid grey;
+  padding: 20px;
+  white-space: normal;
+  width: min-content;
+  margin-bottom: 50px;
+}
+
+.tele-settings label {
+  width: 100%;
+  display: block;
+  margin: 15px 0 0 0;
+  padding: 0;
+  line-height: 20px;
+  position: relative;
+}
+
+.tele-settings label:first-child {
+  margin-top: 0;
+}
+
+.tele-settings input {
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+
+.tele-settings input[type=number] {
+  width: 42px;
+  font-size: 16px;
+}
+
+.tele-settings label span {
+  padding-left: 50px;
+  white-space: nowrap;
+}
