@@ -1,4 +1,4 @@
-function renderSettingsBlock(settings) {
+function renderSettingsBlock(settings){
   const template = `
     <label>
       <input type="checkbox" checked name="mirrored"/>
@@ -29,7 +29,7 @@ function renderSettingsBlock(settings) {
 }
 
 
-function onSettingChange(e) {
+function onSettingChange(e){
   const input = e.currentTarget;
   const key = input.name;
   let value;
@@ -40,7 +40,10 @@ function onSettingChange(e) {
   else {
     value = +input.value;
   }
-  const updatedSettings = { ...getLocalSettings(), [key]: value };
+
+  const updatedSettings = getLocalSettings();
+  updatedSettings[key] = value;
+
   applySettings(updatedSettings);
   setLocalSettings(updatedSettings);
 }
@@ -54,20 +57,24 @@ function applySettings(settings){
   if (settings.color_inverted) {
     document.body.classList.add('tele_color_inverted');
   }
-  document.body.style.setProperty('--tele-font-size', settings.font_size + 'px');
+  document.documentElement.style.setProperty('--tele-font-size', settings.font_size + 'px');
 }
 
 
 function getLocalSettings(){
   let localSettings = {};
+
+  const DEFAULT_SETTINGS = {
+    mirrored: false,
+    color_inverted: true,
+    font_size: 36,
+  };
+
   try {
     localSettings = JSON.parse(localStorage.getItem('SETTINGS')) || {};
   }
   catch (e) {}
-  return {
-    ...DEFAULT_SETTINGS,
-    ...localSettings,
-  };
+  return Object.assign({}, DEFAULT_SETTINGS, localSettings);
 }
 
 
@@ -81,17 +88,11 @@ function setLocalSettings(value){
  * INITIALIZATION
  */
 
-const DEFAULT_SETTINGS = {
-  mirrored: false,
-  color_inverted: true,
-  font_size: 36,
-};
-
 const currentSettings = getLocalSettings();
 
 applySettings(currentSettings);
 renderSettingsBlock(currentSettings);
 
-document.querySelectorAll('.tele-settings input').forEach(element => {
+document.querySelectorAll('.tele-settings input').forEach(function(element){
   element.addEventListener('change', onSettingChange);
 });

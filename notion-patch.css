@@ -1,4 +1,4 @@
-body {
+html {
   --tele-font-size: inherit;
   font-size: var(--tele-font-size);
 }
