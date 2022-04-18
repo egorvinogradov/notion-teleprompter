@@ -35,7 +35,7 @@ Keeping many exports in the `notion-teleprompter` simultaneously is also support
 ---
 
 ### 4. The teleprompter-friendly script is ready! Now publish it online or run locally.
-Here, I use [surge.sh](https://surge.sh) as an example.
+Upload the contents of the `notion-teleprompter` folder onto any HTML-hosting. Here, I use [surge.sh](https://surge.sh) as an example. Surge.sh is a no-hassle static hosting. Check out how to use: https://surge.sh/help/getting-started-with-surge
 
 <img width="763" alt="Screenshot 2022-04-17 at 11 10 44" src="https://user-images.githubusercontent.com/1618344/163702608-6d68359c-42a6-479e-8106-38bf2f9da205.png">
 <img width="920" alt="Screenshot 2022-04-17 at 11 13 28 copy" src="https://user-images.githubusercontent.com/1618344/163702767-18c4b4a0-93ad-4255-8844-a830e504ee69.png">
@@ -58,5 +58,5 @@ Or even a laptop.
 
 Then remotely scroll the script
 
-* Either via [Bluetooth remote](https://www.google.com/search?q=ipad+bluetooth+remote) (they usually come with the teleprompter)
-* Or via [Switch Control](https://www.google.com/search?q=control+ipad+remotely+from+mac) (or alternative apps)
+* Either via [Bluetooth remote](https://www.google.com/search?q=ipad+bluetooth+remote) for mobile devices. They usually come with the teleprompter and work as a simple Bluetooth keyboard. So you don't need to install any teleprompter apps — only pair the remote via Bluetooth.
+* Or via your phone using [Switch Control](https://www.google.com/search?q=control+ipad+remotely+from+iphone) or alternative solutions.
