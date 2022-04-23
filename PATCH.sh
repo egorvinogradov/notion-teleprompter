@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# TODO: Silent erroring if different Python version
+# TODO: Error message & usage info if Notion archive is not found
+# TODO: Race condition in run server & open in browser
 
 unzip_archive() {
   relative_path="$1"
@@ -132,7 +135,7 @@ show_user_message() {
     ⣿⣿⣿⣷⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣾⣿⣿⣿
 
 
-    
+
     TELEPROMPTER IS READY
 
     1. Connect your teleprompter device (e.g. tablet or phone)
@@ -162,7 +165,7 @@ show_user_message() {
 run_local_server() {
   cd "$ARCHIVE_NAME"
   open "$TELEPROMPTER_URL?start=1"
-  (python -m SimpleHTTPServer $TELEPROMPTER_PORT || python -m http.server $TELEPROMPTER_PORT) &
+  python -m SimpleHTTPServer "$TELEPROMPTER_PORT" || python -m http.server "$TELEPROMPTER_PORT"
 }
 
 
