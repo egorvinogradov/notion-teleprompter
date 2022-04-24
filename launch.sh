@@ -5,63 +5,66 @@
 # TODO: Race condition in run server & open in browser
 # TODO: Message if no wifi is connected
 
+
 unzip_archive() {
-  relative_path="$1"
-  archive_name=$(basename "$relative_path" .zip)
+  filename=$(basename "$1" .zip)
+  dirname=$(dirname "$1")
+  path="$dirname/$filename"
 
-  rm -rf "$archive_name"
-  mkdir "$archive_name"
-  tar -xf "$archive_name".zip -C "$archive_name"
-
-  echo "$archive_name"
+  rm -rf "$path"
+  mkdir "$path"
+  tar -xf "$1" -C "$path"
+  echo "$path"
 }
 
 
 create_index_file() {
-  INDEX_FILE="$ARCHIVE_NAME/index.txt"
-  CODE_INJECTION=$(get_code_injection)
+  index_file="$2/index.txt"
 
   header="<!DOCTYPE html>
     <html>
     <head>
       <meta charset='utf-8'>
       <title>Teleprompter</title>
-      $CODE_INJECTION
     </head>
     <body class='teleprompter-index'>
-    <h1>$ARCHIVE_NAME.zip</h1>"
+    <h1>$(basename "$2").zip</h1>"
 
-  footer="</body></html>"
+  footer="$1</body></html>"
 
-  echo "$header" > "$INDEX_FILE"
-  generate_index_recursively_from_filetree "$ARCHIVE_NAME"
-  echo "$footer" >> "$INDEX_FILE"
+  echo "$header" > "$index_file"
+  generate_index_recursively_from_filetree "$index_file" "$2" "$2"
+  echo "$footer" >> "$index_file"
 
-  mv "$INDEX_FILE" "$ARCHIVE_NAME/index.html"
+  mv "$index_file" "$2/index.html"
 }
 
 
 generate_index_recursively_from_filetree() {
-  echo "<ul>" >> "$INDEX_FILE"
+  index_file="$1"
+  current_dir="$2"
+  link_replacement="$3"
 
-  for page_file in "$1"/*.html; do
+  echo "<ul>" >> "$index_file"
+
+  for page_file in "$current_dir"/*.html; do
 
     if [[ -f "$page_file" ]]; then
       page_name=$(extract_page_name_from_html "$page_file")
       page_folder=$(basename "$page_file" .html)
-      link_url=$(echo "$page_file" | sed -e "s,$ARCHIVE_NAME/,,g")
+      link_url=$(echo "$page_file" | sed -e "s,$link_replacement/,,g")
 
-      echo "<li><a href='$link_url'>$page_name</a>" >> "$INDEX_FILE"
+      echo "<li><a href='$link_url'>$page_name</a>" >> "$index_file"
 
-      if [ -d "$1/$page_folder" ]; then
-        generate_index_recursively_from_filetree "$1/$page_folder"
+      if [ -d "$current_dir/$page_folder" ]; then
+        generate_index_recursively_from_filetree "$index_file" "$current_dir/$page_folder" "$link_replacement"
       fi
 
-      echo "</li>" >> "$INDEX_FILE"
+      echo "</li>" >> "$index_file"
     fi
   done
 
-  echo "</ul>" >> "$INDEX_FILE"
+  echo "</ul>" >> "$index_file"
 }
 
 
@@ -78,55 +81,48 @@ extract_page_name_from_html() {
 
 
 get_code_injection() {
-  P2P_HOST=$(get_p2p_server_host)
+  source "$1/.env"
   echo "\
     <link rel='stylesheet' href='/teleprompter.css'/>\
-    <script>window.P2P_SERVER_HOST = '$P2P_HOST';</script>\
+    <script>window.SERVER_HOST = '$SERVER_HOST';</script>\
+    <script src='/socket.io.js'></script>\
     <script src='/teleprompter.js'></script>"
 }
 
 
 patch_notion_files_recursively() {
-  CODE_INJECTION=$(get_code_injection)
-
-  for html_file in "$1"/*.html; do
+  for html_file in "$2"/*.html; do
     echo "Patching $html_file"
-    sed -i -e "s,</body></html>,$CODE_INJECTION</body></html>,g" "$html_file"
+    perl -pi -e "s,</body></html>,$1</body></html>,g" "$html_file"
   done
 
-  for folder in "$1"/*; do
+  for folder in "$2"/*; do
     if [ -d "$folder" ]; then
-      patch_notion_files_recursively "$folder"
+      patch_notion_files_recursively "$1" "$folder"
     fi
   done
 }
 
 
 copy_teleprompter_files() {
-#  cp "$SCRIPT_PATH/index.js" "$ARCHIVE_NAME"
-#  cp "$SCRIPT_PATH/index.css" "$ARCHIVE_NAME"
-  cp "$SCRIPT_PATH/teleprompter.js" "$ARCHIVE_NAME"
-  cp "$SCRIPT_PATH/teleprompter.css" "$ARCHIVE_NAME"
+  cp "$1/socket.io.js" "$2"
+  cp "$1/teleprompter.js" "$2"
+  cp "$1/teleprompter.css" "$2"
 }
 
 
 get_teleprompter_url() {
-  port="$1"
   local_ip_address=$(ifconfig | grep "inet " | grep -Fv 127.0.0.1 | awk '{print $2}')
-  echo "http://$local_ip_address:$port"
-}
-
-get_p2p_server_host() {
-  source "$SCRIPT_PATH/.env"
-  echo "$P2P_SERVER_HOST"
+  echo "http://$local_ip_address:$1"
 }
 
 
 show_user_message() {
-  FORMAT_LINK="$(tput smul)$(tput setaf 006)"
-  FORMAT_FILENAME="$(tput setaf 002)"
-  FORMAT_RESET="$(tput sgr0)"
-
+  url="$1"
+  dirname=$(basename "$2")
+  format_link="$(tput smul)$(tput setaf 006)"
+  format_filename="$(tput setaf 002)"
+  format_reset="$(tput sgr0)"
   echo -e "
 
 
@@ -154,18 +150,18 @@ show_user_message() {
 
     1. Connect your teleprompter device (e.g. tablet or phone)
        to the same Wi-Fi as this laptop.
-    2. On your device, open ${FORMAT_LINK}${TELEPROMPTER_URL}${FORMAT_RESET}
+    2. On your device, open ${format_link}${url}${format_reset}
     3. You're good to go!
 
     ------
 
     WITHOUT USING WI-FI:
     - Alternatively, upload the contents of the
-      ${FORMAT_FILENAME}$ARCHIVE_NAME${FORMAT_RESET} folder
+      ${format_filename}${dirname}${format_reset} folder
       to any static HTML-hosting
 
     TO READ HARDWARE SETUP TIPS:
-    - See ${FORMAT_LINK}https://github.com/egorvinogradov/notion-teleprompter${FORMAT_RESET}
+    - See ${format_link}https://github.com/egorvinogradov/notion-teleprompter${format_reset}
 
     TO QUIT TELEPROMPTER:
     - Press Ctrl+C here in the console
@@ -177,26 +173,36 @@ show_user_message() {
 
 
 run_local_server() {
-  cd "$ARCHIVE_NAME"
-  open "$TELEPROMPTER_URL?start=1"
-  python -m SimpleHTTPServer "$TELEPROMPTER_PORT" || python -m http.server "$TELEPROMPTER_PORT"
+  cd "$2"
+  {
+    python -m SimpleHTTPServer "$1"
+  } || {
+    python -m http.server "$1"
+  }
 }
 
 
-SCRIPT_PATH=$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
+get_script_path() {
+  path=$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
+  echo "$path";
+}
+
 
 ARCHIVE_PATH="$1"
-ARCHIVE_DIRNAME=$(dirname "$ARCHIVE_PATH")
-cd "$ARCHIVE_DIRNAME"
+UNPACKED_PATH=$(unzip_archive "$ARCHIVE_PATH")
 
-ARCHIVE_NAME=$(unzip_archive "$ARCHIVE_PATH")
+SCRIPT_PATH=$(get_script_path)
+CODE_INJECTION=$(get_code_injection "$SCRIPT_PATH")
 
 TELEPROMPTER_PORT=7777
 TELEPROMPTER_URL=$(get_teleprompter_url "$TELEPROMPTER_PORT")
 
 echo ""
-patch_notion_files_recursively "$ARCHIVE_NAME"
-create_index_file
-copy_teleprompter_files
-show_user_message
-run_local_server
+patch_notion_files_recursively "$CODE_INJECTION" "$UNPACKED_PATH"
+create_index_file "$CODE_INJECTION" "$UNPACKED_PATH"
+copy_teleprompter_files "$SCRIPT_PATH" "$UNPACKED_PATH"
+show_user_message "$TELEPROMPTER_URL" "$UNPACKED_PATH"
+run_local_server "$TELEPROMPTER_PORT" "$UNPACKED_PATH"
+
+## TODO: uncomment
+## open "$TELEPROMPTER_URL?start=1"
