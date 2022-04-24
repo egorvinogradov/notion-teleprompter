@@ -1,3 +1,11 @@
+function handleInitialLoad() {
+  if (location.pathname === '/' && location.search.includes('start')) {
+    alert('SHOW INTRO');
+    location.search = '';
+  }
+}
+
+
 function renderSettingsBlock(settings){
   const template = `
     <label>
@@ -23,9 +31,9 @@ function renderSettingsBlock(settings){
   const checkboxColorInverted = document.querySelector('.tele-settings [name=color_inverted]');
   const checkboxFontSize = document.querySelector('.tele-settings [name=font_size]');
 
-  checkboxMirrored.checked = currentSettings.mirrored;
-  checkboxColorInverted.checked = currentSettings.color_inverted;
-  checkboxFontSize.value = currentSettings.font_size;
+  checkboxMirrored.checked = settings.mirrored;
+  checkboxColorInverted.checked = settings.color_inverted;
+  checkboxFontSize.value = settings.font_size;
 }
 
 
@@ -88,11 +96,14 @@ function setLocalSettings(value){
  * INITIALIZATION
  */
 
-const currentSettings = getLocalSettings();
+document.addEventListener('DOMContentLoaded', () => {
+  const currentSettings = getLocalSettings();
 
-applySettings(currentSettings);
-renderSettingsBlock(currentSettings);
+  handleInitialLoad();
+  applySettings(currentSettings);
+  renderSettingsBlock(currentSettings);
 
-document.querySelectorAll('.tele-settings input').forEach(function(element){
-  element.addEventListener('change', onSettingChange);
+  document.querySelectorAll('.tele-settings input').forEach(function(element){
+    element.addEventListener('change', onSettingChange);
+  });
 });

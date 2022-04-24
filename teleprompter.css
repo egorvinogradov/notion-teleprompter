@@ -3,6 +3,19 @@ html {
   font-size: var(--tele-font-size);
 }
 
+.teleprompter-index {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+.teleprompter-index ul {
+  margin-top: 8px;
+  margin-bottom: 15px;
+}
+
+.teleprompter-index li {
+  margin-bottom: 8px;
+}
+
 .tele_color_inverted {
   filter: invert(1);
   background: black;

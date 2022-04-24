@@ -3,6 +3,7 @@
 # TODO: Silent erroring if different Python version
 # TODO: Error message & usage info if Notion archive is not found
 # TODO: Race condition in run server & open in browser
+# TODO: Message if no wifi is connected
 
 unzip_archive() {
   relative_path="$1"
@@ -18,16 +19,16 @@ unzip_archive() {
 
 create_index_file() {
   INDEX_FILE="$ARCHIVE_NAME/index.txt"
+  CODE_INJECTION=$(get_code_injection)
 
   header="<!DOCTYPE html>
     <html>
     <head>
       <meta charset='utf-8'>
       <title>Teleprompter</title>
-      <link rel='stylesheet' href='/index.css'>
-      <script src='/index.js'></script>
+      $CODE_INJECTION
     </head>
-    <body>
+    <body class='teleprompter-index'>
     <h1>$ARCHIVE_NAME.zip</h1>"
 
   footer="</body></html>"
@@ -76,11 +77,17 @@ extract_page_name_from_html() {
 }
 
 
-patch_notion_files_recursively() {
-
-  CODE_INJECTION="\
+get_code_injection() {
+  P2P_HOST=$(get_p2p_server_host)
+  echo "\
     <link rel='stylesheet' href='/teleprompter.css'/>\
+    <script>window.P2P_SERVER_HOST = '$P2P_HOST';</script>\
     <script src='/teleprompter.js'></script>"
+}
+
+
+patch_notion_files_recursively() {
+  CODE_INJECTION=$(get_code_injection)
 
   for html_file in "$1"/*.html; do
     echo "Patching $html_file"
@@ -96,8 +103,8 @@ patch_notion_files_recursively() {
 
 
 copy_teleprompter_files() {
-  cp "$SCRIPT_PATH/index.js" "$ARCHIVE_NAME"
-  cp "$SCRIPT_PATH/index.css" "$ARCHIVE_NAME"
+#  cp "$SCRIPT_PATH/index.js" "$ARCHIVE_NAME"
+#  cp "$SCRIPT_PATH/index.css" "$ARCHIVE_NAME"
   cp "$SCRIPT_PATH/teleprompter.js" "$ARCHIVE_NAME"
   cp "$SCRIPT_PATH/teleprompter.css" "$ARCHIVE_NAME"
 }
@@ -108,6 +115,12 @@ get_teleprompter_url() {
   local_ip_address=$(ifconfig | grep "inet " | grep -Fv 127.0.0.1 | awk '{print $2}')
   echo "http://$local_ip_address:$port"
 }
+
+get_p2p_server_host() {
+  source "$SCRIPT_PATH/.env"
+  echo "$P2P_SERVER_HOST"
+}
+
 
 show_user_message() {
   FORMAT_LINK="$(tput smul)$(tput setaf 006)"
@@ -133,6 +146,7 @@ show_user_message() {
     ⣿⣿⣿⡇⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢸⣿⣿⣿
     ⣿⣿⣿⡇⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⢸⣿⣿⣿
     ⣿⣿⣿⣷⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣾⣿⣿⣿
+    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
 
 
 
@@ -173,7 +187,6 @@ SCRIPT_PATH=$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 
 ARCHIVE_PATH="$1"
 ARCHIVE_DIRNAME=$(dirname "$ARCHIVE_PATH")
-
 cd "$ARCHIVE_DIRNAME"
 
 ARCHIVE_NAME=$(unzip_archive "$ARCHIVE_PATH")

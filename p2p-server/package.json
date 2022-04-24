@@ -1,0 +1,11 @@
+{
+  "name": "notion-teleprompter-p2p-server",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node p2p-server.js",
+    "deploy": "gcloud app deploy --quiet"
+  },
+  "dependencies": {
+    "socket.io": "4.5.0"
+  }
+}
