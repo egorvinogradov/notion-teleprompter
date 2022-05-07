@@ -1,5 +1,18 @@
 window.TP = window.TP || {};
 
+/**
+ * 1. Line height
+ * 2. Left paddings
+ * 3. Header font sizes
+ * 4. Fixed panel
+ * 5. Parcel build for iOS 10
+ * 6. Disable presenter view on host machine
+ * 7. npm start in launch.sh
+ * 8. Panel should always stick to left side
+ * 9. Auto scroll mode?
+ * 10. Update readme
+ */
+
 
 class Presenter {
 
