@@ -4,7 +4,7 @@ html {
 }
 
 .teleprompter-index {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
 }
 
 .teleprompter-index ul {
@@ -16,20 +16,20 @@ html {
   margin-bottom: 8px;
 }
 
-.tele_color_inverted {
+.teleprompter--colors-inverted {
   filter: invert(1);
   background: black;
 }
 
-.tele_mirrored {
+.teleprompter--mirrored {
   transform: scaleX(-1);
 }
 
-.tele_mirrored .tele-settings {
+.teleprompter--mirrored .teleprompter-panel {
   transform: scaleX(-1);
 }
 
-.tele-settings {
+.teleprompter-panel {
   font-size: 20px;
   line-height: 20px;
   font-family: sans-serif;
@@ -40,7 +40,7 @@ html {
   margin-bottom: 50px;
 }
 
-.tele-settings label {
+.teleprompter-panel label {
   width: 100%;
   display: block;
   margin: 15px 0 0 0;
@@ -49,11 +49,11 @@ html {
   position: relative;
 }
 
-.tele-settings label:first-child {
+.teleprompter-panel label:first-child {
   margin-top: 0;
 }
 
-.tele-settings input {
+.teleprompter-panel input {
   margin: 0;
   padding: 0;
   position: absolute;
@@ -61,12 +61,12 @@ html {
   right: 0;
 }
 
-.tele-settings input[type=number] {
+.teleprompter-panel input[type=number] {
   width: 42px;
   font-size: 16px;
 }
 
-.tele-settings label span {
+.teleprompter-panel label span {
   padding-left: 50px;
   white-space: nowrap;
 }

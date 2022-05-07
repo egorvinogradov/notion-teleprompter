@@ -3,11 +3,15 @@ const http = require('http');
 const socketIO = require('socket.io');
 
 const httpServer = http.createServer((request, response) => {
-  response.writeHead(200, { 'Content-Type': 'text/plain' });
-  response.end('notion-teleprompter-p2p-server');
+  response.writeHead(200, {
+    'Content-Type': 'text/plain',
+    'Access-Control-Allow-Origin': '*',
+  });
+  response.end('notion-teleprompter-sync-server');
 }).listen(PORT);
 
 const io = socketIO(httpServer, {
+  transports: ['polling'],
   cors: {
     origin: '*'
   },

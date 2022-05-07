@@ -81,10 +81,8 @@ extract_page_name_from_html() {
 
 
 get_code_injection() {
-  source "$1/.env"
   echo "\
     <link rel='stylesheet' href='/teleprompter.css'/>\
-    <script>window.SERVER_HOST = '$SERVER_HOST';</script>\
     <script src='/socket.io.js'></script>\
     <script src='/teleprompter.js'></script>"
 }
@@ -105,9 +103,9 @@ patch_notion_files_recursively() {
 
 
 copy_teleprompter_files() {
-  cp "$1/socket.io.js" "$2"
-  cp "$1/teleprompter.js" "$2"
-  cp "$1/teleprompter.css" "$2"
+  ln -s "$1/socket.io.js" "$2/socket.io.js"
+  ln -s "$1/teleprompter.js" "$2/teleprompter.js"
+  ln -s "$1/teleprompter.css" "$2/teleprompter.css"
 }
 
 

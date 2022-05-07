@@ -1,4 +1,4 @@
 .DS_Store
 .idea
-p2p-server/node_modules/
-p2p-server/.DS_Store
+sync-server/node_modules/
+sync-server/.DS_Store

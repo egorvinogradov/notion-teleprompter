@@ -1,8 +1,8 @@
 {
-  "name": "notion-teleprompter-p2p-server",
+  "name": "notion-teleprompter-sync-server",
   "version": "1.0.0",
   "scripts": {
-    "start": "node p2p-server.js",
+    "start": "node sync-server.js",
     "deploy": "gcloud app deploy --quiet"
   },
   "dependencies": {
