@@ -1,6 +1,10 @@
 {
   "name": "notion-teleprompter-sync-server",
   "version": "1.0.0",
+  "browserslist": [
+    "since 2016",
+    "iOS >= 10.2"
+  ],
   "scripts": {
     "start": "node sync-server.js"
   },
@@ -9,6 +13,7 @@
   },
   "devDependencies": {
     "@babel/cli": "7.17.10",
-    "@babel/core": "7.17.10"
+    "@babel/core": "7.17.10",
+    "@babel/preset-env": "^7.17.10"
   }
 }

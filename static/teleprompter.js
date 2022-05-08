@@ -219,7 +219,7 @@ class Sync {
     if (this.getDeviceRole() === 'host') {
       this.sendCommand({
         type: 'navigate',
-        pathname,
+        pathname: decodeURIComponent(pathname),
       });
       this.presenter.onSettingsChange(settings => {
         this.sendCommand({

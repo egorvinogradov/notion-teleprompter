@@ -114,6 +114,13 @@ link_teleprompter_files() {
 }
 
 
+compile_teleprompter_javascript(){
+  npx babel "$1/static/teleprompter.js" \
+    --out-file "$2/teleprompter/teleprompter.babel.js" \
+    --presets=@babel/preset-env
+}
+
+
 get_local_ip_address() {
   ifconfig | grep "inet " | grep -Fv -m 1 127.0.0.1 | awk '{print $2}'
 }
@@ -204,11 +211,6 @@ TELEPROMPTER_PORT=7777
 TELEPROMPTER_IP_ADDRESS=$(get_local_ip_address)
 
 PYTHON_VERSION=$(get_python_version)
-
-
-compile_teleprompter_javascript(){
-  npx babel "$1/static/teleprompter.js" --out-file "$2/teleprompter/teleprompter.babel.js"
-}
 
 
 echo ""
