@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-# TODO: Silent erroring if different Python version
+# ✅ TODO: Silent erroring if different Python version
 # TODO: Error message & usage info if Notion archive is not found
-# TODO: Race condition in run server & open in browser
+# ✅ TODO: Race condition in run server & open in browser
 # TODO: Message if no wifi is connected
 
 
@@ -82,9 +82,9 @@ extract_page_name_from_html() {
 
 get_code_injection() {
   echo "\
-    <link rel='stylesheet' href='/teleprompter.css'/>\
-    <script src='/socket.io.js'></script>\
-    <script src='/teleprompter.js'></script>"
+    <link rel='stylesheet' href='/teleprompter/teleprompter.css'/>\
+    <script src='/teleprompter/socket.io.js'></script>\
+    <script src='/teleprompter/teleprompter.babel.js'></script>"
 }
 
 
@@ -102,22 +102,26 @@ patch_notion_files_recursively() {
 }
 
 
-copy_teleprompter_files() {
-  ln -s "$1/socket.io.js" "$2/socket.io.js"
-  ln -s "$1/teleprompter.js" "$2/teleprompter.js"
-  ln -s "$1/teleprompter.css" "$2/teleprompter.css"
+install_dependencies() {
+  npm install --prefix "$1"
 }
 
 
-get_teleprompter_url() {
-  local_ip_address=$(ifconfig | grep "inet " | grep -Fv 127.0.0.1 | awk '{print $2}')
-  echo "http://$local_ip_address:$1"
+link_teleprompter_files() {
+  mkdir "$2/teleprompter"
+  ln -s "$1/node_modules/socket.io/client-dist/socket.io.js" "$2/teleprompter/socket.io.js"
+  ln -s "$1/static/teleprompter.css" "$2/teleprompter/teleprompter.css"
+}
+
+
+get_local_ip_address() {
+  ifconfig | grep "inet " | grep -Fv -m 1 127.0.0.1 | awk '{print $2}'
 }
 
 
 show_user_message() {
-  url="$1"
-  dirname=$(basename "$2")
+  url="http://$2:$1"
+  dirname=$(basename "$3")
   format_link="$(tput smul)$(tput setaf 006)"
   format_filename="$(tput setaf 002)"
   format_reset="$(tput sgr0)"
@@ -170,13 +174,17 @@ show_user_message() {
 }
 
 
-run_local_server() {
-  cd "$2"
-  {
-    python -m SimpleHTTPServer "$1"
-  } || {
-    python -m http.server "$1"
-  }
+get_python_version(){
+  python -c 'import sys; version=sys.version_info[:1]; print("{0}".format(*version))'
+}
+
+
+open_in_browser() {
+  sleep 2s
+
+  url="http://localhost:$1?start=$2"
+  echo "Opening $url..."
+  open "$url"
 }
 
 
@@ -193,14 +201,46 @@ SCRIPT_PATH=$(get_script_path)
 CODE_INJECTION=$(get_code_injection "$SCRIPT_PATH")
 
 TELEPROMPTER_PORT=7777
-TELEPROMPTER_URL=$(get_teleprompter_url "$TELEPROMPTER_PORT")
+TELEPROMPTER_IP_ADDRESS=$(get_local_ip_address)
+
+PYTHON_VERSION=$(get_python_version)
+
+
+compile_teleprompter_javascript(){
+  npx babel "$1/static/teleprompter.js" --out-file "$2/teleprompter/teleprompter.babel.js"
+}
+
 
 echo ""
 patch_notion_files_recursively "$CODE_INJECTION" "$UNPACKED_PATH"
 create_index_file "$CODE_INJECTION" "$UNPACKED_PATH"
-copy_teleprompter_files "$SCRIPT_PATH" "$UNPACKED_PATH"
-show_user_message "$TELEPROMPTER_URL" "$UNPACKED_PATH"
-run_local_server "$TELEPROMPTER_PORT" "$UNPACKED_PATH"
 
-## TODO: uncomment
-## open "$TELEPROMPTER_URL?start=1"
+install_dependencies "$SCRIPT_PATH"
+link_teleprompter_files "$SCRIPT_PATH" "$UNPACKED_PATH"
+compile_teleprompter_javascript "$SCRIPT_PATH" "$UNPACKED_PATH"
+
+show_user_message "$TELEPROMPTER_PORT" "$TELEPROMPTER_IP_ADDRESS" "$UNPACKED_PATH"
+
+
+# Server Initialization
+
+trap 'kill $pid1 $pid2' 2
+
+node "$SCRIPT_PATH"/sync-server.js & pid1=$!
+echo "Node Socket Server launched (process ID: $pid1)"
+
+cd "$UNPACKED_PATH"
+
+if [ "$PYTHON_VERSION" -ge 3 ]; then
+  echo "Python 3 detected";
+  python -m http.server "$TELEPROMPTER_PORT" & pid2=$!
+else
+  echo "Python 2 detected";
+  python -m SimpleHTTPServer "$TELEPROMPTER_PORT" & pid2=$!
+fi
+echo "Python HTTP Server launched (process ID: $pid2)"
+
+open_in_browser "$TELEPROMPTER_PORT" "$TELEPROMPTER_IP_ADDRESS"
+echo ""
+
+wait

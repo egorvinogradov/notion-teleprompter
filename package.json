@@ -2,10 +2,13 @@
   "name": "notion-teleprompter-sync-server",
   "version": "1.0.0",
   "scripts": {
-    "start": "node sync-server.js",
-    "deploy": "gcloud app deploy --quiet"
+    "start": "node sync-server.js"
   },
   "dependencies": {
     "socket.io": "4.5.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "7.17.10",
+    "@babel/core": "7.17.10"
   }
 }

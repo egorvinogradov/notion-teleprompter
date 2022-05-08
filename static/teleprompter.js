@@ -11,6 +11,7 @@ window.TP = window.TP || {};
  * 8. Panel should always stick to left side
  * 9. Auto scroll mode?
  * 10. Update readme
+ * 11. Intro screen "Open <IP_ADDRESS:7777>"
  */
 
 
