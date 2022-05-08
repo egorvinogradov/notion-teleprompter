@@ -4,6 +4,7 @@
 # TODO: Error message & usage info if Notion archive is not found
 # ✅ TODO: Race condition in run server & open in browser
 # TODO: Message if no wifi is connected
+# TODO: <meta viewport> injection for mobile screens
 
 
 unzip_archive() {

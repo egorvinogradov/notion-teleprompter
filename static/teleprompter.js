@@ -5,9 +5,9 @@ window.TP = window.TP || {};
  * 2. Left paddings
  * 3. Header font sizes
  * 4. Fixed panel
- * 5. Parcel build for iOS 10
- * 6. Disable presenter view on host machine
- * 7. npm start in launch.sh
+ * ✅ 5. Babel compile for iOS 10
+ * 6. Hide presenter panel on host machine
+ * ✅ 7. npm start in launch.sh
  * 8. Panel should always stick to left side
  * 9. Auto scroll mode?
  * 10. Update readme
@@ -207,7 +207,8 @@ class Sync {
   };
 
   initialize = () => {
-    const { pathname } = location;
+    const pathname = decodeURIComponent(location.pathname);
+
     this.socket = io(this.SYNC_SERVER_URL);
 
     const params = this.parseQueryParams();
@@ -219,7 +220,7 @@ class Sync {
     if (this.getDeviceRole() === 'host') {
       this.sendCommand({
         type: 'navigate',
-        pathname: decodeURIComponent(pathname),
+        pathname,
       });
       this.presenter.onSettingsChange(settings => {
         this.sendCommand({
