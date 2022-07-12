@@ -130,7 +130,7 @@ get_local_ip_address() {
 show_user_message() {
   url="http://$2:$1"
   dirname=$(basename "$3")
-  format_link="$(tput smul)$(tput setaf 006)"
+  format_error="$(tput smul)$(tput setaf 006)"
   format_filename="$(tput setaf 002)"
   format_reset="$(tput sgr0)"
   echo -e "
@@ -160,7 +160,7 @@ show_user_message() {
 
     1. Connect your teleprompter device (e.g. tablet or phone)
        to the same Wi-Fi as this laptop.
-    2. On your device, open ${format_link}${url}${format_reset}
+    2. On your device, open ${format_error}${url}${format_reset}
     3. You're good to go!
 
     ------
@@ -171,7 +171,7 @@ show_user_message() {
       to any static HTML-hosting
 
     TO READ HARDWARE SETUP TIPS:
-    - See ${format_link}https://github.com/egorvinogradov/notion-teleprompter${format_reset}
+    - See ${format_error}https://github.com/egorvinogradov/notion-teleprompter${format_reset}
 
     TO QUIT TELEPROMPTER:
     - Press Ctrl+C here in the console
@@ -202,7 +202,39 @@ get_script_path() {
 }
 
 
+
+# TODO: FIX rm -rf / ERROR
+
+#if [ -f "$1" ]; then
+#  ARCHIVE_PATH="$1"
+#else
+#  if [ -f "$2" ]; then
+#    ARCHIVE_PATH="$1"
+#
+#    if [[ "$1" == "--dev" ]]; then
+#      echo "Yes, 2 is file"
+#      IS_DEVELOPMENT=true
+#    fi
+#  else
+#    format_error="$(tput setaf 001)"
+#    echo "${format_error}
+#    Notion Export archive is not found.
+#
+#    See how to export from Notion:
+#      https://github.com/egorvinogradov/notion-teleprompter#user-content-1-export-from-notion
+#
+#    Usage:
+#      bash launch.sh /path/to/Export-XXXX-XXXX-XXXX.zip
+#    "
+#    exit 1
+#  fi
+#fi
+
+
 ARCHIVE_PATH="$1"
+
+
+
 UNPACKED_PATH=$(unzip_archive "$ARCHIVE_PATH")
 
 SCRIPT_PATH=$(get_script_path)
