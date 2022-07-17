@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+
+echo "❌❌❌ TODO: FIX RM -RF ROOT BUG ON LINE 212!!!"
+echo "❌❌❌ EXITING..."
+exit 1
+
+
 # ✅ TODO: Silent erroring if different Python version
 # TODO: Error message & usage info if Notion archive is not found
 # ✅ TODO: Race condition in run server & open in browser
